@@ -60,19 +60,26 @@ public class UserServiceImpl implements UserService {
     public CommonResponse registerUser(UserRegisterRequest userRegisterRequest) {
         CommonResponse response = new CommonResponse();
         try{
-            User user = new User();
-            Random random = new Random();
-            user.setUserId(userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99))));
-            user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
-            user.setPassword(CommonClass.getMD5(userRegisterRequest.getPassword().trim()));
-            user.setEmail(userRegisterRequest.getEmail());
-            user.setFullname(userRegisterRequest.getFullname());
-            user.setGender(userRegisterRequest.getGender());
-            user.setRole("user");
-            user.setStatus("Active");
-            userRepository.save(user);
-            response.setStatus(200);
-            response.setMessage("Đăng kí tài khỏan mới thành công !!!");
+            User checkExist = userRepository.findByPhoneNumber(userRegisterRequest.getPhoneNumber().trim());
+            if (checkExist == null){
+                User user = new User();
+                Random random = new Random();
+                user.setUserId(userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99))));
+                user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
+                user.setPassword(CommonClass.getMD5(userRegisterRequest.getPassword().trim()));
+                user.setEmail(userRegisterRequest.getEmail());
+                user.setFullname(userRegisterRequest.getFullname());
+                user.setGender(userRegisterRequest.getGender());
+                user.setRole("user");
+                user.setStatus("Active");
+                userRepository.save(user);
+                response.setStatus(200);
+                response.setMessage("Đăng kí tài khỏan mới thành công !!!");
+            }else {
+                response.setStatus(417);
+                response.setMessage("Tài khoản đã tồn tại !!!");
+            }
+
 
         }catch (Exception e){
             response.setStatus(417);

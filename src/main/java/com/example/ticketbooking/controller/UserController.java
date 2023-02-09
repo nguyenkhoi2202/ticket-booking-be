@@ -25,8 +25,10 @@ public class UserController {
                 responseEntity = ResponseEntity.status(417).body(CommonClass.notEmpty());
             }else {
                 CommonResponse response = userService.loginUser(request);
-                if (response != null){
+                if (response.getStatus() == 200){
                     responseEntity = ResponseEntity.status(200).body(response);
+                } else if (response.getStatus() == 417) {
+                    responseEntity = ResponseEntity.status(417).body(response);
                 }
             }
 
@@ -40,13 +42,24 @@ public class UserController {
     @CrossOrigin(origins = "*")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegisterRequest request) {
-
+        ResponseEntity responseEntity = null;
+        try{
             if (request.getPhoneNumber().isEmpty() || request.getPassword().isEmpty() ||
                     request.getEmail().isEmpty() || request.getFullname().isEmpty() || request.getGender().isEmpty()){
-                return ResponseEntity.status(417).body(CommonClass.notEmpty());
+                responseEntity = ResponseEntity.status(417).body(CommonClass.notEmpty());
             }else {
                 CommonResponse response = userService.registerUser(request);
-                return ResponseEntity.status(200).body(response);
+                if (response.getStatus() == 200){
+                    responseEntity =  ResponseEntity.status(200).body(response);
+                } else if (response.getStatus() == 417) {
+                    responseEntity = ResponseEntity.status(417).body(response);
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+
     }
 }
