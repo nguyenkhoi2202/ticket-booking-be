@@ -4,6 +4,7 @@ import com.example.ticketbooking.common.CommonClass;
 import com.example.ticketbooking.entity.User;
 import com.example.ticketbooking.model.request.UserLoginRequest;
 import com.example.ticketbooking.model.request.UserRegisterRequest;
+import com.example.ticketbooking.model.request.UserUpdateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
 import com.example.ticketbooking.model.response.UserLoginResponse;
 import com.example.ticketbooking.repository.UserRepository;
@@ -11,6 +12,8 @@ import com.example.ticketbooking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -89,5 +92,102 @@ public class UserServiceImpl implements UserService {
             return response;
         }
 
+    }
+
+    @Override
+    public List<UserLoginResponse> getAllUser() {
+        List<User> userList = userRepository.getAllUser();
+        if (userList != null){
+            List<UserLoginResponse> responseList = new ArrayList<>();
+            for (int i = 0; i < userList.size(); i++){
+                UserLoginResponse userLoginResponse = new UserLoginResponse();
+                userLoginResponse.setPhoneNumber(userList.get(i).getPhoneNumber());
+                userLoginResponse.setFullname(userList.get(i).getFullname());
+                userLoginResponse.setEmail(userList.get(i).getEmail());
+                userLoginResponse.setRole(userList.get(i).getRole());
+                userLoginResponse.setGender(userList.get(i).getGender());
+                responseList.add(userLoginResponse);
+            }
+            return responseList;
+
+        }else {
+            return null;
+        }
+
+    }
+
+    @Override
+    public CommonResponse updateUser(UserUpdateRequest request) {
+        CommonResponse response = new CommonResponse();
+        try{
+            User user = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
+            if(user != null){
+                user.setFullname(request.getFullname());
+                user.setEmail(request.getEmail());
+                user.setGender(request.getGender());
+                userRepository.save(user);
+                response.setStatus(200);
+                response.setMessage("Cập nhật user thành công");
+            }else {
+                response.setStatus(417);
+                response.setMessage("Cập nhật user thất bại !!!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return response;
+        }
+
+    }
+
+    @Override
+    public CommonResponse deleteUser(String phoneNumber) {
+        CommonResponse response = new CommonResponse();
+        try{
+            User user = userRepository.findByPhoneNumber(phoneNumber);
+            if (user != null){
+                int result = userRepository.deleteUser(phoneNumber);
+                if(result != 0){
+                    response.setStatus(200);
+                    response.setMessage("Xóa user thành công");
+                }else {
+                    response.setStatus(417);
+                    response.setMessage("Xóa user thất bại !!!");
+                }
+            }else {
+                response.setStatus(417);
+                response.setMessage("Không tồn tại user để xóa !!!");
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return response;
+        }
+
+    }
+
+    @Override
+    public List<UserLoginResponse> searchByPhoneNumber(String keySearch) {
+        List<UserLoginResponse> responseList = new ArrayList<>();
+        try{
+            List<User> userLoginResponse = userRepository.getAllUserByPhoneNumber(keySearch);
+            if (userLoginResponse != null){
+                for (int i = 0 ; i < userLoginResponse.size(); i++){
+                    UserLoginResponse response = new UserLoginResponse();
+                    response.setFullname(userLoginResponse.get(i).getFullname());
+                    response.setPhoneNumber(userLoginResponse.get(i).getPhoneNumber());
+                    response.setEmail(userLoginResponse.get(i).getEmail());
+                    response.setRole(userLoginResponse.get(i).getRole());
+                    response.setGender(userLoginResponse.get(i).getGender());
+                    responseList.add(response);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseList;
+        }
     }
 }
