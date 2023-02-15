@@ -18,24 +18,13 @@ public class Station {
     @Column(name = "station_id", nullable = false)
     private String stationId;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "station_start", nullable = false)
+    private String stationStart;
 
-    @Column(name = "address", nullable = false)
-    private String address;
+    @Column(name = "station_end", nullable = false)
+    private String stationEnd;
 
     @Column(name = "status", nullable = false)
     private String status;
-
-    @Column(name = "province", nullable = false)
-    private String province;
-
-    @Column(name = "district", nullable = false)
-    private String district;
-
-    @Column(name = "ward", nullable = false)
-    private String ward;
-
-
 
 }

@@ -33,6 +33,9 @@ public class Trip {
     @Column(name = "route_id", nullable = false)
     private String routeId;
 
+    @Column(name = "station_id", nullable = false)
+    private String stationId;
+
     @Column(name = "status", nullable = false)
     private String status;
 

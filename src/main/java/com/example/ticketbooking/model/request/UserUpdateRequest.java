@@ -10,4 +10,5 @@ public class UserUpdateRequest implements Serializable {
     private final String gender;
     private final String phoneNumber;
     private final String email;
+    private final String status;
 }

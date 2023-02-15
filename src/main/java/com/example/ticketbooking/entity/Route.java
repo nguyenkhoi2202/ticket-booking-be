@@ -19,29 +19,23 @@ public class Route {
     @Column(name = "route_id", nullable = false)
     private String routeId;
 
-    @Column(name = "from", nullable = false)
+    @Column(name = "froms")
     private String from;
 
-    @Column(name = "to", nullable = false)
-    private String to;
+    @Column(name = "arrive")
+    private String arrive;
 
-    @Column(name = "travel_time", nullable = false)
+    @Column(name = "travel_time")
     private String travelTime;
 
-    @Column(name = "distance", nullable = false)
+    @Column(name = "distance")
     private String distance;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image")
     private String image;
 
-    @Column(name = "fare", nullable = false)
+    @Column(name = "fare")
     private String fare;
-
-    @Column(name = "station_start_id", nullable = false)
-    private String stationStartId;
-
-    @Column(name = "station_end_id", nullable = false)
-    private String stationEndId;
 
     @Column(name = "status", nullable = false)
     private String status;

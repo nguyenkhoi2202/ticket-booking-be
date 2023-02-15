@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
                 response.setStatus(417);
                 response.setMessage("Tài khoản không tồn tại !!!");
             }else {
-                if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("Active")){
+                if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("active")){
                     response.setStatus(200);
                     response.setMessage("Login thành công !!!");
                     UserLoginResponse loginResponse = new UserLoginResponse();
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
                     loginResponse.setGender(user.getGender());
                     loginResponse.setRole(user.getRole());
                     response.setData(loginResponse);
-                } else if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("InActive")) {
+                } else if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("inactive")) {
                     response.setStatus(417);
                     response.setMessage("Tài khoản bạn đang bị tạm khóa !!!");
                 } else if (!passwordEncrypt.equals(user.getPassword().trim())) {
@@ -67,14 +67,14 @@ public class UserServiceImpl implements UserService {
             if (checkExist == null){
                 User user = new User();
                 Random random = new Random();
-                user.setUserId(userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99))));
+                user.setUserId("user" + userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99))));
                 user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
                 user.setPassword(CommonClass.getMD5(userRegisterRequest.getPassword().trim()));
                 user.setEmail(userRegisterRequest.getEmail());
                 user.setFullname(userRegisterRequest.getFullname());
                 user.setGender(userRegisterRequest.getGender());
                 user.setRole("user");
-                user.setStatus("Active");
+                user.setStatus("active");
                 userRepository.save(user);
                 response.setStatus(200);
                 response.setMessage("Đăng kí tài khỏan mới thành công !!!");
@@ -100,13 +100,15 @@ public class UserServiceImpl implements UserService {
         if (userList != null){
             List<UserLoginResponse> responseList = new ArrayList<>();
             for (int i = 0; i < userList.size(); i++){
-                UserLoginResponse userLoginResponse = new UserLoginResponse();
-                userLoginResponse.setPhoneNumber(userList.get(i).getPhoneNumber());
-                userLoginResponse.setFullname(userList.get(i).getFullname());
-                userLoginResponse.setEmail(userList.get(i).getEmail());
-                userLoginResponse.setRole(userList.get(i).getRole());
-                userLoginResponse.setGender(userList.get(i).getGender());
-                responseList.add(userLoginResponse);
+               if (userList.get(i).getStatus().equals("active")){
+                   UserLoginResponse userLoginResponse = new UserLoginResponse();
+                   userLoginResponse.setPhoneNumber(userList.get(i).getPhoneNumber());
+                   userLoginResponse.setFullname(userList.get(i).getFullname());
+                   userLoginResponse.setEmail(userList.get(i).getEmail());
+                   userLoginResponse.setRole(userList.get(i).getRole());
+                   userLoginResponse.setGender(userList.get(i).getGender());
+                   responseList.add(userLoginResponse);
+               }
             }
             return responseList;
 
@@ -125,6 +127,7 @@ public class UserServiceImpl implements UserService {
                 user.setFullname(request.getFullname());
                 user.setEmail(request.getEmail());
                 user.setGender(request.getGender());
+                user.setStatus(request.getStatus());
                 userRepository.save(user);
                 response.setStatus(200);
                 response.setMessage("Cập nhật user thành công");
@@ -146,20 +149,18 @@ public class UserServiceImpl implements UserService {
         try{
             User user = userRepository.findByPhoneNumber(phoneNumber);
             if (user != null){
-                int result = userRepository.deleteUser(phoneNumber);
-                if(result != 0){
-                    response.setStatus(200);
-                    response.setMessage("Xóa user thành công");
-                }else {
-                    response.setStatus(417);
-                    response.setMessage("Xóa user thất bại !!!");
-                }
+                user.setStatus("inactive");
+                userRepository.save(user);
+                response.setStatus(200);
+                response.setMessage("Xóa user thành công");
             }else {
                 response.setStatus(417);
                 response.setMessage("Không tồn tại user để xóa !!!");
             }
 
         }catch (Exception e){
+            response.setStatus(417);
+            response.setMessage("Xóa user thất bại !!!");
             e.printStackTrace();
         }finally {
             return response;
