@@ -18,13 +18,13 @@ public class Vehicle {
     @Column(name = "vehical_id", nullable = false)
     private String vehicalId;
 
-    @Column(name = "license_plates", nullable = false)
+    @Column(name = "license_plates", unique = true)
     private String licensePlates;
 
-    @Column(name = "color", nullable = false)
+    @Column(name = "color")
     private String color;
 
-    @Column(name = "seat", nullable = false)
+    @Column(name = "seat")
     private String seat;
 
     @Column(name = "vehicle_type_id", nullable = false)
