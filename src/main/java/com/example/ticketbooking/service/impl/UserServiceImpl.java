@@ -102,6 +102,7 @@ public class UserServiceImpl implements UserService {
             for (int i = 0; i < userList.size(); i++){
                if (userList.get(i).getStatus().equals("active")){
                    UserLoginResponse userLoginResponse = new UserLoginResponse();
+                   userLoginResponse.setUserId(userList.get(i).getUserId());
                    userLoginResponse.setPhoneNumber(userList.get(i).getPhoneNumber());
                    userLoginResponse.setFullname(userList.get(i).getFullname());
                    userLoginResponse.setEmail(userList.get(i).getEmail());

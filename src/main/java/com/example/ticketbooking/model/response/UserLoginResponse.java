@@ -14,6 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginResponse implements Serializable {
+    private  String userId;
     private  String fullname;
     private  String gender;
     private  String phoneNumber;
