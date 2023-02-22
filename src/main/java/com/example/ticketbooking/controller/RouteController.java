@@ -7,6 +7,7 @@ import com.example.ticketbooking.model.request.RouteCreateRequest;
 import com.example.ticketbooking.model.request.RouteUpdateRequest;
 import com.example.ticketbooking.model.request.UserLoginRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
+import com.example.ticketbooking.model.response.RouteDataResponse;
 import com.example.ticketbooking.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,24 @@ public class RouteController {
             List<Route> responses = routeService.getAllRoute();
             if (responses != null){
                 responseEntity =  ResponseEntity.status(200).body(responses);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/getRouteById")
+    public ResponseEntity<?> getRouteById(@RequestParam String routeId) {
+        ResponseEntity responseEntity = null;
+        try{
+            RouteDataResponse response = routeService.getRouteById(routeId);
+            if (response.getRouteId() != null){
+                responseEntity =  ResponseEntity.status(200).body(response);
+            }else {
+                responseEntity =  ResponseEntity.status(417).body(response);
             }
         }catch (Exception e){
             e.printStackTrace();

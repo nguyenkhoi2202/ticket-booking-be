@@ -4,6 +4,7 @@ import com.example.ticketbooking.entity.Route;
 import com.example.ticketbooking.model.request.RouteCreateRequest;
 import com.example.ticketbooking.model.request.RouteUpdateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
+import com.example.ticketbooking.model.response.RouteDataResponse;
 import com.example.ticketbooking.model.response.UserLoginResponse;
 import com.example.ticketbooking.repository.RouteRepository;
 import com.example.ticketbooking.service.RouteService;
@@ -117,5 +118,27 @@ public class RouteServiceImpl implements RouteService {
         }finally {
             return  response;
         }
+    }
+
+    @Override
+    public RouteDataResponse getRouteById(String routeId) {
+        RouteDataResponse response = new RouteDataResponse();
+        try {
+            Route route = routeRepository.findById(routeId).get();
+            if (route != null && route.getStatus().equals("active")){
+                response.setRouteId(route.getRouteId());
+                response.setFrom(route.getFrom());
+                response.setArrive(route.getArrive());
+                response.setFare(route.getFare());
+                response.setImage(route.getImage());
+                response.setDistance(route.getDistance());
+                response.setTravelTime(route.getTravelTime());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return response;
+        }
+
     }
 }

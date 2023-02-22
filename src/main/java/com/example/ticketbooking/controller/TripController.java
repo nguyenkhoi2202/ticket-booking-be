@@ -2,11 +2,9 @@ package com.example.ticketbooking.controller;
 
 import com.example.ticketbooking.entity.Route;
 import com.example.ticketbooking.entity.Trip;
-import com.example.ticketbooking.model.request.RouteCreateRequest;
-import com.example.ticketbooking.model.request.RouteUpdateRequest;
-import com.example.ticketbooking.model.request.TripCreateRequest;
-import com.example.ticketbooking.model.request.TripUpdateRequest;
+import com.example.ticketbooking.model.request.*;
 import com.example.ticketbooking.model.response.CommonResponse;
+import com.example.ticketbooking.model.response.TripDataResponse;
 import com.example.ticketbooking.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +24,11 @@ public class TripController {
     public ResponseEntity<?> getAllTrip() {
         ResponseEntity responseEntity = null;
         try{
-            List<Trip> responses = tripService.getAllTrip();
+            List<TripDataResponse> responses = tripService.getAllTrip();
             if (responses != null){
                 responseEntity =  ResponseEntity.status(200).body(responses);
+            }else {
+                responseEntity =  ResponseEntity.status(417).body(responses);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -82,6 +82,24 @@ public class TripController {
             if (responses.getStatus() == 200){
                 responseEntity =  ResponseEntity.status(200).body(responses);
             }else{
+                responseEntity =  ResponseEntity.status(417).body(responses);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/getAllTripByDate")
+    public ResponseEntity<?> getAllTripByDate(@RequestBody TripDataRequest request) {
+        ResponseEntity responseEntity = null;
+        try{
+            List<TripDataResponse> responses = tripService.getAllTripByDate(request);
+            if (responses != null){
+                responseEntity =  ResponseEntity.status(200).body(responses);
+            }else {
                 responseEntity =  ResponseEntity.status(417).body(responses);
             }
         }catch (Exception e){
