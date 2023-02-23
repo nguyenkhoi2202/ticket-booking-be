@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class TripDataResponse implements Serializable {
+    private String tripId;
     private String liencePlate; // vehicle
     private String from;
     private String arrival;

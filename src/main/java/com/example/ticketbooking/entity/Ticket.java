@@ -33,10 +33,10 @@ public class Ticket {
     private String status;
 
     @Column(name = "user_id", nullable = false)
-    private int userId;
+    private String userId;
 
     @Column(name = "trip_id", nullable = false)
-    private int tripId;
+    private String tripId;
 
 
 }

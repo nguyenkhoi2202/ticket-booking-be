@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Random;
 @Service
 public class TripServiceImpl implements TripService {
 
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
     @Autowired
     TripRepository tripRepository;
 
@@ -48,6 +49,7 @@ public class TripServiceImpl implements TripService {
             List<TripDataResponse> responseList = new ArrayList<>();
             for (int i = 0; i < tripList.size(); i++){
                 TripDataResponse data = new TripDataResponse();
+                data.setTripId(tripList.get(i).getTripId());
                 data.setDate(String.valueOf(tripList.get(i).getDate()));
                 data.setTime(tripList.get(i).getTime());
                 Vehicle vehicle = vehicleRepository.getVehicleById(tripList.get(i).getVehicalId());
@@ -87,7 +89,7 @@ public class TripServiceImpl implements TripService {
             trip.setVehicalId(request.getVehicalId());
             trip.setStationId(request.getStationId());
             trip.setTime(request.getTime());
-            trip.setDate(format.parse(request.getDate()));
+            trip.setDate(LocalDate.parse(request.getDate()));
             trip.setStatus("active");
             trip.setRouteId(request.getRouteId());
             tripRepository.save(trip);
@@ -108,7 +110,7 @@ public class TripServiceImpl implements TripService {
         try{
             Trip trip = tripRepository.findById(request.getTripId()).get();
             if(trip != null){
-                trip.setDate(format.parse(request.getDate()));
+                trip.setDate(LocalDate.parse(request.getDate()));
                 trip.setTime(request.getTime());
                 trip.setStatus(request.getStatus());
                 tripRepository.save(trip);
@@ -156,12 +158,13 @@ public class TripServiceImpl implements TripService {
     @Override
     public List<TripDataResponse> getAllTripByDate(TripDataRequest request) {
         try {
-            Date date = format.parse(request.getDate());
+            Date date = formater.parse(request.getDate());
             List<Trip> tripList = tripRepository.getListTripByRouteIdAndDate(request.getRouteId(), date);
             if (tripList != null){
                 List<TripDataResponse> responseList = new ArrayList<>();
                 for (int i = 0; i < tripList.size(); i++){
                     TripDataResponse data = new TripDataResponse();
+                    data.setTripId(tripList.get(i).getTripId());
                     data.setDate(String.valueOf(tripList.get(i).getDate()));
                     data.setTime(tripList.get(i).getTime());
                     Vehicle vehicle = vehicleRepository.getVehicleById(tripList.get(i).getVehicalId());
