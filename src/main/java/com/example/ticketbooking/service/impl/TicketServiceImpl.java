@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -46,5 +48,18 @@ public class TicketServiceImpl implements TicketService {
             return response;
         }
 
+    }
+
+    @Override
+    public List<Ticket> getListTicketByUserId(String userId) {
+        List<Ticket> ticketList = new ArrayList<>();
+        try{
+            ticketList = ticketRepository.getListTicketByUserId(userId);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return ticketList;
+        }
     }
 }
