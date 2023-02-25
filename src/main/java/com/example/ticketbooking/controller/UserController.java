@@ -141,4 +141,16 @@ public class UserController {
         }
 
     }
+    @CrossOrigin(origins = "*")
+    @GetMapping("/verify")
+    public void verify(@RequestParam String code) {
+        ResponseEntity responseEntity = null;
+        try{
+            userService.verify(code);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 }

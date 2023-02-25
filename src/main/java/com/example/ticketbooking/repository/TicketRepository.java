@@ -15,4 +15,7 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
 
     @Query(value = "select * from ticket where user_id = :userId",nativeQuery = true)
     List<Ticket> getListTicketByUserId(@Param("userId") String userId);
+
+    @Query(value = "select * from ticket where ticket_id = :ticketId", nativeQuery = true)
+    Ticket getByTicketId(@Param("ticketId") String ticketId);
 }

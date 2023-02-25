@@ -1,10 +1,15 @@
 package com.example.ticketbooking.service.impl;
 
 import com.example.ticketbooking.entity.Ticket;
+import com.example.ticketbooking.entity.Trip;
+import com.example.ticketbooking.entity.User;
 import com.example.ticketbooking.model.request.TicketCreateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
 import com.example.ticketbooking.model.response.CreateTicketResultResponse;
+import com.example.ticketbooking.model.response.TicketGetByTicketIdResponse;
 import com.example.ticketbooking.repository.TicketRepository;
+import com.example.ticketbooking.repository.TripRepository;
+import com.example.ticketbooking.repository.UserRepository;
 import com.example.ticketbooking.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,11 @@ public class TicketServiceImpl implements TicketService {
     TicketRepository ticketRepository;
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    @Autowired
+    private TripRepository tripRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public CommonResponse createTicket(TicketCreateRequest request) {
         CommonResponse response = new CommonResponse();
@@ -60,6 +70,31 @@ public class TicketServiceImpl implements TicketService {
             e.printStackTrace();
         }finally {
             return ticketList;
+        }
+    }
+
+    @Override
+    public TicketGetByTicketIdResponse getTicketByTicketId(String ticketId) {
+        TicketGetByTicketIdResponse response = new TicketGetByTicketIdResponse();
+        try{
+            Ticket ticket = ticketRepository.getByTicketId(ticketId);
+            if (ticket != null){
+                Trip trip = tripRepository.findById(ticket.getTripId()).get();
+                User user = userRepository.findById(ticket.getUserId()).get();
+                    response.setFullName(user.getFullname());
+                    response.setPhoneNumber(user.getPhoneNumber());
+                    response.setEmail(user.getEmail());
+                    response.setDate(String.valueOf(trip.getDate()));
+                    response.setTime(trip.getTime());
+                    response.setVehicleId(trip.getVehicalId());
+                    response.setStationId(trip.getStationId());
+                    response.setRouteId(trip.getRouteId());
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return response;
         }
     }
 }

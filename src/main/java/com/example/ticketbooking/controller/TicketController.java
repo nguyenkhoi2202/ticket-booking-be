@@ -4,6 +4,7 @@ import com.example.ticketbooking.entity.Ticket;
 import com.example.ticketbooking.model.request.RouteCreateRequest;
 import com.example.ticketbooking.model.request.TicketCreateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
+import com.example.ticketbooking.model.response.TicketGetByTicketIdResponse;
 import com.example.ticketbooking.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,24 @@ public class TicketController {
         try{
             List<Ticket> responses = ticketService.getListTicketByUserId(userId);
             if (responses.size() != 0){
+                responseEntity =  ResponseEntity.status(200).body(responses);
+            }else{
+                responseEntity =  ResponseEntity.status(417).body("Không có ticket nào");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/getTicketByTicketId")
+    public ResponseEntity<?> getTicketByTicketId(@RequestParam String ticketId) {
+        ResponseEntity responseEntity = null;
+        try{
+            TicketGetByTicketIdResponse responses = ticketService.getTicketByTicketId(ticketId);
+            if (responses.getPhoneNumber() != null){
                 responseEntity =  ResponseEntity.status(200).body(responses);
             }else{
                 responseEntity =  ResponseEntity.status(417).body("Không có ticket nào");

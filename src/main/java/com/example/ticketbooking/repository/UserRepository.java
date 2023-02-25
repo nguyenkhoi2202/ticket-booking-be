@@ -13,10 +13,7 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-    @Transactional
-    @Modifying
-    @Query("delete from User u where u.phoneNumber = :phoneNumber")
-    int deleteUser(String phoneNumber);
+
     User findByPhoneNumber(String phoneNumber);
 
     @Query(value = "select * from users", nativeQuery = true)
@@ -25,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "select * from users where phone_number like %:keySearch% ", nativeQuery = true)
     List<User> getAllUserByPhoneNumber(@Param("keySearch") String keySearch);
+
+    @Query(value = "select * from users where verification_code = :code", nativeQuery = true)
+    User getUserByVerificationCode(@Param("code") String code);
 }

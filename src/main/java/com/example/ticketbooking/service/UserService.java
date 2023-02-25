@@ -18,4 +18,6 @@ public interface UserService {
     CommonResponse deleteUser(String phoneNumber);
 
     List<UserLoginResponse> searchByPhoneNumber(String keySearch);
+
+    void verify(String code);
 }

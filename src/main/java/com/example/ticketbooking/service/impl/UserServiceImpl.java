@@ -2,6 +2,7 @@ package com.example.ticketbooking.service.impl;
 
 import com.example.ticketbooking.common.CommonClass;
 import com.example.ticketbooking.entity.User;
+import com.example.ticketbooking.mail.EmailSenderService;
 import com.example.ticketbooking.model.request.UserLoginRequest;
 import com.example.ticketbooking.model.request.UserRegisterRequest;
 import com.example.ticketbooking.model.request.UserUpdateRequest;
@@ -9,18 +10,23 @@ import com.example.ticketbooking.model.response.CommonResponse;
 import com.example.ticketbooking.model.response.UserLoginResponse;
 import com.example.ticketbooking.repository.UserRepository;
 import com.example.ticketbooking.service.UserService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    EmailSenderService emailSenderService;
 
     @Override
     public CommonResponse loginUser(UserLoginRequest userDto) {
@@ -42,10 +48,14 @@ public class UserServiceImpl implements UserService {
                     loginResponse.setGender(user.getGender());
                     loginResponse.setRole(user.getRole());
                     response.setData(loginResponse);
-                } else if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("inactive")) {
+                } else if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("locked")) {
                     response.setStatus(417);
                     response.setMessage("Tài khoản bạn đang bị tạm khóa !!!");
-                } else if (!passwordEncrypt.equals(user.getPassword().trim())) {
+                }else if (passwordEncrypt.equals(user.getPassword().trim()) && user.getStatus().equals("inactive")) {
+                    response.setStatus(417);
+                    response.setMessage("Tài khoản bạn chưa được kích hoạt !!!");
+                }
+                else if (!passwordEncrypt.equals(user.getPassword().trim())) {
                     response.setStatus(417);
                     response.setMessage("Mật khẩu sai !!!");
                 }
@@ -67,17 +77,27 @@ public class UserServiceImpl implements UserService {
             if (checkExist == null){
                 User user = new User();
                 Random random = new Random();
-                user.setUserId("user" + userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99))));
+                String userId = "user" + userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99)));
+                user.setUserId(userId);
                 user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
                 user.setPassword(CommonClass.getMD5(userRegisterRequest.getPassword().trim()));
                 user.setEmail(userRegisterRequest.getEmail());
                 user.setFullname(userRegisterRequest.getFullname());
                 user.setGender(userRegisterRequest.getGender());
                 user.setRole("user");
-                user.setStatus("active");
+                user.setStatus("inactive");
+                String code = RandomStringUtils.random(30, true, true);
+                user.setVerifyCode(code);
                 userRepository.save(user);
                 response.setStatus(200);
                 response.setMessage("Đăng kí tài khỏan mới thành công !!!");
+
+                String body = "<p>Dear " + userRegisterRequest.getFullname() + ",</p>";
+                body += "<p> Vui lòng click vào link bên dưới để xác thực tài khoản: </p>";
+                String link = "http://localhost:8080/users/verify?code=" + code;
+                body += "<h3> <a href=\""  + link +  "\">Link</a> </h3>";
+                body += "<p>Cảm ơn !!!  </p>";
+                emailSenderService.sendSimpleEmail(userRegisterRequest.getEmail().trim(),"Xác thực tài khoản đăng kí", body );
             }else {
                 response.setStatus(417);
                 response.setMessage("Tài khoản đã tồn tại !!!");
@@ -100,7 +120,6 @@ public class UserServiceImpl implements UserService {
         if (userList != null){
             List<UserLoginResponse> responseList = new ArrayList<>();
             for (int i = 0; i < userList.size(); i++){
-               if (userList.get(i).getStatus().equals("active")){
                    UserLoginResponse userLoginResponse = new UserLoginResponse();
                    userLoginResponse.setUserId(userList.get(i).getUserId());
                    userLoginResponse.setPhoneNumber(userList.get(i).getPhoneNumber());
@@ -109,7 +128,6 @@ public class UserServiceImpl implements UserService {
                    userLoginResponse.setRole(userList.get(i).getRole());
                    userLoginResponse.setGender(userList.get(i).getGender());
                    responseList.add(userLoginResponse);
-               }
             }
             return responseList;
 
@@ -150,7 +168,7 @@ public class UserServiceImpl implements UserService {
         try{
             User user = userRepository.findByPhoneNumber(phoneNumber);
             if (user != null){
-                user.setStatus("inactive");
+                user.setStatus("locked");
                 userRepository.save(user);
                 response.setStatus(200);
                 response.setMessage("Xóa user thành công");
@@ -190,6 +208,20 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
         }finally {
             return responseList;
+        }
+    }
+
+    @Override
+    public void verify(String code) {
+        try{
+            User user = userRepository.getUserByVerificationCode(code);
+            if (user != null){
+                user.setStatus("active");
+                userRepository.save(user);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

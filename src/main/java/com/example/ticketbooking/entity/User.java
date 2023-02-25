@@ -39,5 +39,8 @@ public class User {
     @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "verification_code", nullable = false)
+    private String verifyCode;
+
 
 }
