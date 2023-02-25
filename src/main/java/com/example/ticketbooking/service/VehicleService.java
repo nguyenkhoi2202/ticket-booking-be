@@ -15,4 +15,6 @@ public interface VehicleService {
     CommonResponse ụpdateVehicle(VehicleUpdateRequest request);
 
     CommonResponse createVehicle(VehicleCreateRequest request);
+
+    Vehicle getVehicleById(String vehicleId);
 }

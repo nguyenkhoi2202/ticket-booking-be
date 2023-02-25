@@ -15,4 +15,6 @@ public interface StationService {
     CommonResponse updateStation(StationUpdateRequest request);
 
     CommonResponse deleteStation(String stationId);
+
+    Station getStationById(String stationId);
 }

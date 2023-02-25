@@ -1,5 +1,6 @@
 package com.example.ticketbooking.service.impl;
 
+import com.example.ticketbooking.controller.VehicleController;
 import com.example.ticketbooking.entity.Route;
 import com.example.ticketbooking.entity.Vehicle;
 import com.example.ticketbooking.model.request.VehicleCreateRequest;
@@ -26,9 +27,7 @@ public class VehicleServiceImpl implements VehicleService {
         if (vehicleList != null){
             List<Vehicle> responseList = new ArrayList<>();
             for (int i = 0; i < vehicleList.size(); i++){
-                if (vehicleList.get(i).getStatus().equals("active")){
-                    responseList.add(vehicleList.get(i));
-                }
+                responseList.add(vehicleList.get(i));
             }
             return  responseList;
         }else {
@@ -126,5 +125,16 @@ public class VehicleServiceImpl implements VehicleService {
         }finally {
             return response;
         }
+    }
+
+    @Override
+    public Vehicle getVehicleById(String vehicleId) {
+        Vehicle vehicle = vehicleRepository.getVehicleById(vehicleId);
+        if(vehicle != null){
+            return  vehicle;
+        }else {
+            return null;
+        }
+
     }
 }

@@ -28,6 +28,8 @@ public class StationController {
             List<Station> responses = stationService.getAllStation();
             if (responses != null){
                 responseEntity =  ResponseEntity.status(200).body(responses);
+            }else{
+                responseEntity =  ResponseEntity.status(417).body(responses);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -82,6 +84,24 @@ public class StationController {
                 responseEntity =  ResponseEntity.status(200).body(responses);
             }else{
                 responseEntity =  ResponseEntity.status(417).body(responses);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/getStationById")
+    public ResponseEntity<?> getStationById(@RequestParam String stationId) {
+        ResponseEntity responseEntity = null;
+        try{
+            Station responses = stationService.getStationById(stationId);
+            if (responses != null){
+                responseEntity =  ResponseEntity.status(200).body(responses);
+            }else{
+                responseEntity =  ResponseEntity.status(417).body("Không tìm thấy Station !!!");
             }
         }catch (Exception e){
             e.printStackTrace();

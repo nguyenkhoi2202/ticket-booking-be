@@ -12,6 +12,9 @@ public class TripDataResponse implements Serializable {
     private String arrival;
     private String fare;// route
     private String date;
+    private String vehicleId;
+    private String stationId;
+    private String routeId;
     private String time;//trip
     private String stationStart;
     private String stationEnd;

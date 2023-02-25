@@ -52,6 +52,9 @@ public class TripServiceImpl implements TripService {
                 data.setTripId(tripList.get(i).getTripId());
                 data.setDate(String.valueOf(tripList.get(i).getDate()));
                 data.setTime(tripList.get(i).getTime());
+                data.setRouteId(tripList.get(i).getRouteId());
+                data.setStationId(tripList.get(i).getStationId());
+                data.setVehicleId(tripList.get(i).getVehicalId());
                 Vehicle vehicle = vehicleRepository.getVehicleById(tripList.get(i).getVehicalId());
                 if (vehicle != null){
                     data.setLiencePlate(vehicle.getLicensePlates());

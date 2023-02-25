@@ -29,6 +29,8 @@ public class VehicleController {
             List<Vehicle> responses = vehicleService.getAllVehicle();
             if (responses != null){
                 responseEntity =  ResponseEntity.status(200).body(responses);
+            }else {
+                responseEntity =  ResponseEntity.status(417).body(responses);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -83,6 +85,24 @@ public class VehicleController {
                 responseEntity =  ResponseEntity.status(200).body(responses);
             }else{
                 responseEntity =  ResponseEntity.status(417).body(responses);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/getVehicleById")
+    public ResponseEntity<?> getVehicleById(@RequestParam String vehicleId) {
+        ResponseEntity responseEntity = null;
+        try{
+            Vehicle responses = vehicleService.getVehicleById(vehicleId);
+            if (responses != null){
+                responseEntity =  ResponseEntity.status(200).body(responses);
+            }else {
+                responseEntity =  ResponseEntity.status(417).body("Không tìm thấy vehicle !!!");
             }
         }catch (Exception e){
             e.printStackTrace();

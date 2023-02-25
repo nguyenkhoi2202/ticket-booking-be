@@ -106,4 +106,14 @@ public class StationServiceImpl implements StationService {
             return  response;
         }
     }
+
+    @Override
+    public Station getStationById(String stationId) {
+        Station station = stationRepository.getSationByStationId(stationId);
+        if (station != null){
+            return  station;
+        }else {
+            return null;
+        }
+    }
 }
