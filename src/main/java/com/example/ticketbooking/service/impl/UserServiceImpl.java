@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
                     response.setStatus(200);
                     response.setMessage("Login thành công !!!");
                     UserLoginResponse loginResponse = new UserLoginResponse();
+                    loginResponse.setUserId(user.getUserId());
                     loginResponse.setPhoneNumber(user.getPhoneNumber());
                     loginResponse.setFullname(user.getFullname());
                     loginResponse.setEmail(user.getEmail());
@@ -195,6 +196,7 @@ public class UserServiceImpl implements UserService {
             if (userLoginResponse != null){
                 for (int i = 0 ; i < userLoginResponse.size(); i++){
                     UserLoginResponse response = new UserLoginResponse();
+                    response.setUserId(userLoginResponse.get(i).getUserId());
                     response.setFullname(userLoginResponse.get(i).getFullname());
                     response.setPhoneNumber(userLoginResponse.get(i).getPhoneNumber());
                     response.setEmail(userLoginResponse.get(i).getEmail());
