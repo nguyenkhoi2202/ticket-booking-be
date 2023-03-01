@@ -1,6 +1,7 @@
 package com.example.ticketbooking.controller;
 
 import com.example.ticketbooking.common.CommonClass;
+import com.example.ticketbooking.model.request.UserChangePasswordRequest;
 import com.example.ticketbooking.model.request.UserLoginRequest;
 import com.example.ticketbooking.model.request.UserRegisterRequest;
 import com.example.ticketbooking.model.request.UserUpdateRequest;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -69,6 +69,31 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "*")
+    @PostMapping("/createAdmin")
+    public ResponseEntity<?> createAdmin(@RequestBody UserRegisterRequest request) {
+        ResponseEntity responseEntity = null;
+        try{
+            if (request.getPhoneNumber().isEmpty() || request.getPassword().isEmpty() ||
+                    request.getEmail().isEmpty() || request.getFullname().isEmpty() || request.getGender().isEmpty()){
+                responseEntity = ResponseEntity.status(417).body(CommonClass.notEmpty());
+            }else {
+                CommonResponse response = userService.createAdmin(request);
+                if (response.getStatus() == 200){
+                    responseEntity =  ResponseEntity.status(200).body(response);
+                } else if (response.getStatus() == 417) {
+                    responseEntity = ResponseEntity.status(417).body(response);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+
+    }
+
+
+    @CrossOrigin(origins = "*")
     @PostMapping("/getAllUser")
     public ResponseEntity<?> getAllUser() {
         ResponseEntity responseEntity = null;
@@ -91,6 +116,25 @@ public class UserController {
         ResponseEntity responseEntity = null;
         try{
             CommonResponse response = userService.updateUser(request);
+            if (response.getStatus() == 200){
+                responseEntity =  ResponseEntity.status(200).body(response);
+            }else if(response.getStatus() == 417) {
+                responseEntity =  ResponseEntity.status(417).body(response);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody UserChangePasswordRequest request) {
+        ResponseEntity responseEntity = null;
+        try{
+            CommonResponse response = userService.changePassword(request);
             if (response.getStatus() == 200){
                 responseEntity =  ResponseEntity.status(200).body(response);
             }else if(response.getStatus() == 417) {

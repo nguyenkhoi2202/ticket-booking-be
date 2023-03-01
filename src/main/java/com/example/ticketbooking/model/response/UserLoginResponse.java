@@ -20,4 +20,5 @@ public class UserLoginResponse implements Serializable {
     private  String phoneNumber;
     private  String email;
     private  String role;
+    private  String status;
 }

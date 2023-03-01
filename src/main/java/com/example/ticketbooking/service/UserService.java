@@ -1,6 +1,7 @@
 package com.example.ticketbooking.service;
 
 import com.example.ticketbooking.entity.User;
+import com.example.ticketbooking.model.request.UserChangePasswordRequest;
 import com.example.ticketbooking.model.request.UserLoginRequest;
 import com.example.ticketbooking.model.request.UserRegisterRequest;
 import com.example.ticketbooking.model.request.UserUpdateRequest;
@@ -20,4 +21,8 @@ public interface UserService {
     List<UserLoginResponse> searchByPhoneNumber(String keySearch);
 
     void verify(String code);
+
+    CommonResponse createAdmin(UserRegisterRequest request);
+
+    CommonResponse changePassword(UserChangePasswordRequest request);
 }

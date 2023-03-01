@@ -1,8 +1,7 @@
 package com.example.ticketbooking.service.impl;
 
-import com.example.ticketbooking.entity.Ticket;
-import com.example.ticketbooking.entity.Trip;
-import com.example.ticketbooking.entity.User;
+import com.example.ticketbooking.controller.TicketDataResponse;
+import com.example.ticketbooking.entity.*;
 import com.example.ticketbooking.model.request.TicketCreateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
 import com.example.ticketbooking.model.response.CreateTicketResultResponse;
@@ -10,6 +9,7 @@ import com.example.ticketbooking.model.response.TicketGetByTicketIdResponse;
 import com.example.ticketbooking.repository.TicketRepository;
 import com.example.ticketbooking.repository.TripRepository;
 import com.example.ticketbooking.repository.UserRepository;
+import com.example.ticketbooking.repository.VehicleRepository;
 import com.example.ticketbooking.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +31,8 @@ public class TicketServiceImpl implements TicketService {
     private TripRepository tripRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     @Override
     public CommonResponse createTicket(TicketCreateRequest request) {
@@ -96,5 +98,55 @@ public class TicketServiceImpl implements TicketService {
         }finally {
             return response;
         }
+    }
+
+    @Override
+    public CommonResponse deleteTicket(String ticketId) {
+        CommonResponse response = new CommonResponse();
+        try{
+            Ticket ticket = ticketRepository.findById(ticketId).get();
+            if (ticket != null){
+                ticket.setStatus("inactive");
+                ticketRepository.save(ticket);
+                response.setStatus(200);
+                response.setMessage("Xóa thành công");
+            }else {
+                response.setStatus(417);
+                response.setMessage("Không tồn tại ticket để xóa");
+            }
+
+        }catch (Exception e){
+            response.setStatus(417);
+            response.setMessage("Xóa thất bại");
+            e.printStackTrace();
+        }finally {
+            return  response;
+        }
+    }
+
+    @Override
+    public List<TicketDataResponse> getAllTicket() {
+        List<Ticket> ticketList = ticketRepository.getAllTicket();
+        if (ticketList != null){
+            List<TicketDataResponse> responses = new ArrayList<>();
+            for (int i = 0; i < ticketList.size(); i++){
+                TicketDataResponse data = new TicketDataResponse();
+                User user = userRepository.findById(ticketList.get(i).getUserId()).get();
+                data.setFullName(user.getFullname());
+                data.setPhoneNumber(user.getPhoneNumber());
+                data.setTicketId(ticketList.get(i).getTicketId());
+                data.setTripId(ticketList.get(i).getTripId());
+                data.setBooking_date(String.valueOf(ticketList.get(i).getBookingDate()));
+                data.setPrice(String.valueOf(ticketList.get(i).getPrice()));
+                data.setSeatNo(ticketList.get(i).getSeatNo());
+                data.setStatus(ticketList.get(i).getStatus());
+                data.setUserId(ticketList.get(i).getUserId());
+                responses.add(data);
+            }
+            return responses;
+        }else {
+            return null;
+        }
+
     }
 }

@@ -3,6 +3,7 @@ package com.example.ticketbooking.service.impl;
 import com.example.ticketbooking.common.CommonClass;
 import com.example.ticketbooking.entity.User;
 import com.example.ticketbooking.mail.EmailSenderService;
+import com.example.ticketbooking.model.request.UserChangePasswordRequest;
 import com.example.ticketbooking.model.request.UserLoginRequest;
 import com.example.ticketbooking.model.request.UserRegisterRequest;
 import com.example.ticketbooking.model.request.UserUpdateRequest;
@@ -70,15 +71,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
     public CommonResponse registerUser(UserRegisterRequest userRegisterRequest) {
         CommonResponse response = new CommonResponse();
-        try{
+        try {
             User checkExist = userRepository.findByPhoneNumber(userRegisterRequest.getPhoneNumber().trim());
-            if (checkExist == null){
+            if (checkExist == null) {
                 User user = new User();
                 Random random = new Random();
-                String userId = "user" + userRegisterRequest.getPhoneNumber().substring(5).concat(Integer.toString(random.nextInt(99)));
+                String userId = "user" + userRegisterRequest.getPhoneNumber().substring(5)
+                        .concat(Integer.toString(random.nextInt(99)));
                 user.setUserId(userId);
                 user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
                 user.setPassword(CommonClass.getMD5(userRegisterRequest.getPassword().trim()));
@@ -87,7 +90,7 @@ public class UserServiceImpl implements UserService {
                 user.setGender(userRegisterRequest.getGender());
                 user.setRole("user");
                 user.setStatus("inactive");
-                String code = RandomStringUtils.random(30, true, true);
+                String code = RandomStringUtils.random(6, false, true);
                 user.setVerifyCode(code);
                 userRepository.save(user);
                 response.setStatus(200);
@@ -95,26 +98,26 @@ public class UserServiceImpl implements UserService {
 
                 String body = "<p>Dear " + userRegisterRequest.getFullname() + ",</p>";
                 body += "<p> Vui lòng click vào link bên dưới để xác thực tài khoản: </p>";
-                String link = "http://localhost:8080/users/verify?code=" + code;
-                body += "<h3> <a href=\""  + link +  "\">Link</a> </h3>";
+                String link = "http://localhost:3000/register/verify";
+                body += "<h3> <a href=\"" + link + "\">Link</a> </h3>";
+                body += "<h3>OTP của bạn là : </h3>" + code;
                 body += "<p>Cảm ơn !!!  </p>";
-                emailSenderService.sendSimpleEmail(userRegisterRequest.getEmail().trim(),"Xác thực tài khoản đăng kí", body );
-            }else {
+                emailSenderService.sendSimpleEmail(userRegisterRequest.getEmail().trim(), "Xác thực tài khoản đăng kí",
+                        body);
+            } else {
                 response.setStatus(417);
                 response.setMessage("Tài khoản đã tồn tại !!!");
             }
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             response.setStatus(417);
             response.setMessage("Đăng kí tài khỏan mới thất bại !!!");
             e.printStackTrace();
-        }finally {
+        } finally {
             return response;
         }
 
     }
-
     @Override
     public List<UserLoginResponse> getAllUser() {
         List<User> userList = userRepository.getAllUser();
@@ -128,6 +131,7 @@ public class UserServiceImpl implements UserService {
                    userLoginResponse.setEmail(userList.get(i).getEmail());
                    userLoginResponse.setRole(userList.get(i).getRole());
                    userLoginResponse.setGender(userList.get(i).getGender());
+                   userLoginResponse.setStatus(userList.get(i).getStatus());
                    responseList.add(userLoginResponse);
             }
             return responseList;
@@ -224,6 +228,69 @@ public class UserServiceImpl implements UserService {
 
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public CommonResponse createAdmin(UserRegisterRequest request) {
+        CommonResponse response = new CommonResponse();
+        try {
+            User checkExist = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
+            if (checkExist == null) {
+                User user = new User();
+                Random random = new Random();
+                String userId = "admin" + request.getPhoneNumber().substring(5)
+                        .concat(Integer.toString(random.nextInt(99)));
+                user.setUserId(userId);
+                user.setPhoneNumber(request.getPhoneNumber());
+                user.setPassword(CommonClass.getMD5(request.getPassword().trim()));
+                user.setEmail(request.getEmail());
+                user.setFullname(request.getFullname());
+                user.setGender(request.getGender());
+                user.setRole("admin");
+                user.setStatus("active");
+                userRepository.save(user);
+                response.setStatus(200);
+                response.setMessage("Đăng kí tài khỏan admin thành công !!!");
+
+            } else {
+                response.setStatus(417);
+                response.setMessage("Tài khoản đã tồn tại !!!");
+            }
+
+        } catch (Exception e) {
+            response.setStatus(417);
+            response.setMessage("Đăng kí tài khỏan admin thất bại !!!");
+            e.printStackTrace();
+        } finally {
+            return response;
+        }
+    }
+
+    @Override
+    public CommonResponse changePassword(UserChangePasswordRequest request) {
+        CommonResponse response = new CommonResponse();
+        try{
+            User user = userRepository.findByPhoneNumber(request.getPhoneNumber().trim());
+            if(user != null){
+                if (CommonClass.getMD5(request.getOldPassword().trim()).equals(user.getPassword().trim())){
+                    user.setPassword(CommonClass.getMD5(request.getNewPassword().trim()));
+                    userRepository.save(user);
+                    response.setStatus(200);
+                    response.setMessage("Đổi mật khẩu thành công");
+                }else{
+                    response.setStatus(417);
+                    response.setMessage("Mật khẩu cũ không khớp!!!");
+                }
+
+            }else {
+                response.setStatus(417);
+                response.setMessage("Không tồn tại tài khoản này !!!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return response;
         }
     }
 }
