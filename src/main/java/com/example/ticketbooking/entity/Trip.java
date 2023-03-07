@@ -25,7 +25,7 @@ public class Trip {
     @Column(name = "vehical_id", nullable = false)
     private String vehicalId;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date_trip", nullable = false)
     private LocalDate date;
 
     @Column(name = "time", nullable = false)

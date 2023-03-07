@@ -7,6 +7,7 @@ import com.example.ticketbooking.model.request.TripUpdateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
 import com.example.ticketbooking.model.response.TripDataResponse;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface TripService {
@@ -19,4 +20,6 @@ public interface TripService {
     CommonResponse deleteTrip(String tripId);
 
     List<TripDataResponse> getAllTripByDate(TripDataRequest request);
+
+    void cancelTicket() throws ParseException;
 }

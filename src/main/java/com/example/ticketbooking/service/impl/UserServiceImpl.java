@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
                 String body = "<p>Dear " + userRegisterRequest.getFullname() + ",</p>";
                 body += "<p> Vui lòng click vào link bên dưới để xác thực tài khoản: </p>";
-                String link = "http://localhost:3000/register/verify";
+                String link = "https://dt-booking-ticket.vercel.app/register/verify";
                 body += "<h3> <a href=\"" + link + "\">Link</a> </h3>";
                 body += "<h3>OTP của bạn là : </h3>" + code;
                 body += "<p>Cảm ơn !!!  </p>";

@@ -1,9 +1,6 @@
 package com.example.ticketbooking.service.impl;
 
-import com.example.ticketbooking.entity.Route;
-import com.example.ticketbooking.entity.Station;
-import com.example.ticketbooking.entity.Trip;
-import com.example.ticketbooking.entity.Vehicle;
+import com.example.ticketbooking.entity.*;
 import com.example.ticketbooking.model.request.TripCreateRequest;
 import com.example.ticketbooking.model.request.TripDataRequest;
 import com.example.ticketbooking.model.request.TripUpdateRequest;
@@ -196,6 +193,28 @@ public class TripServiceImpl implements TripService {
             }
         } catch (ParseException e) {
             throw new RuntimeException(e);
+        }
+
+
+    }
+
+    // This method is used to cancel the ticket.
+    @Override
+    public void cancelTicket() throws ParseException {
+        // TODO document why this method is empty
+        Date today = new Date();
+        String date = formater.format(today);
+        List<String> tripIdList = tripRepository.getAllDate(LocalDate.parse(date));
+
+        for (int i = 0; i < tripIdList.size(); i ++){
+            List<Ticket> ticketList = ticketRepository.getAllTicketByTripId(tripIdList.get(i));
+            if (ticketList != null){
+                for (int j = 0; j < ticketList.size(); j++){
+                    ticketList.get(j).setStatus("expired");
+                    // Saving the ticket to the database.
+                    ticketRepository.save(ticketList.get(j));
+                }
+            }
         }
 
 
