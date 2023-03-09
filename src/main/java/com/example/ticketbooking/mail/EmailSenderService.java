@@ -22,7 +22,7 @@ public class EmailSenderService {
     ) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom("quocnguyenbao567@gmail.com", "DT-Booking");
+        helper.setFrom("anngodang12@gmail.com", "DT-Booking");
         helper.setTo(toEmail);
         helper.setSubject(subject);
 

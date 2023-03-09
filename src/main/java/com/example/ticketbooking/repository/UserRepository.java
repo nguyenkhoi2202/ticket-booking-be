@@ -25,4 +25,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "select * from users where verification_code = :code", nativeQuery = true)
     User getUserByVerificationCode(@Param("code") String code);
+
+    @Query(value = "select fullname from users where user_id = :userId", nativeQuery = true)
+    String getFullNameById(@Param("userId") String userId);
+
+    @Query(value = "select email from users where user_id = :userId", nativeQuery = true)
+    String getEmailById(@Param("userId") String userId);
 }

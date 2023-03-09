@@ -2,19 +2,18 @@ package com.example.ticketbooking.service.impl;
 
 import com.example.ticketbooking.controller.TicketDataResponse;
 import com.example.ticketbooking.entity.*;
+import com.example.ticketbooking.mail.EmailSenderService;
 import com.example.ticketbooking.model.request.TicketCreateRequest;
 import com.example.ticketbooking.model.response.CommonResponse;
 import com.example.ticketbooking.model.response.CreateTicketResultResponse;
 import com.example.ticketbooking.model.response.TicketGetByTicketIdResponse;
-import com.example.ticketbooking.repository.TicketRepository;
-import com.example.ticketbooking.repository.TripRepository;
-import com.example.ticketbooking.repository.UserRepository;
-import com.example.ticketbooking.repository.VehicleRepository;
+import com.example.ticketbooking.repository.*;
 import com.example.ticketbooking.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,11 +28,22 @@ public class TicketServiceImpl implements TicketService {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     @Autowired
     private TripRepository tripRepository;
+
+    @Autowired
+    EmailSenderService emailSenderService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private VehicleRepository vehicleRepository;
+    @Autowired
+    private RouteRepository routeRepository;
 
+    /**
+     * The function is used to create a ticket.
+     *
+     * @param request The request object contains the following parameters:
+     * @return A ticket object
+     */
     @Override
     public CommonResponse createTicket(TicketCreateRequest request) {
         CommonResponse response = new CommonResponse();
@@ -50,11 +60,31 @@ public class TicketServiceImpl implements TicketService {
             ticket.setSeatNo("sea" + String.valueOf(numberTicket + 1));
             ticket.setStatus("active");
             ticketRepository.save(ticket);
+            Trip trip = tripRepository.getTripByTripId(request.getTripId());
+            Route route = routeRepository.getRouteByRouteId(trip.getRouteId());
+
+            String body = "<p>Dear " + userRepository.getFullNameById(request.getUserId()) + ",</p>";
+            body += "<p> Cảm ơn bạn đã đặt vé. Thông tin vé bạn như sau: </p>";
+//            String link = "https://dt-booking-ticket.vercel.app/register/verify";
+//            body += "<h3> <a href=\"" + link + "\">Link</a> </h3>";
+            body += "<h4>Ngày đặt vé: " + LocalDate.now() + " </h4>";
+            body += "<h4>Số ghế: " + "sea" + String.valueOf(numberTicket + 1) + "  </h5>";
+            body += "<h4>Từ: " + route.getFrom().toUpperCase() + " </h4>" ;
+            body += "<h4>Đến: " + route.getArrive().toUpperCase() + " </h4>" ;
+            body += "<h4>Giá vé: " + request.getPrice() + " </h4>" ;
+            body += "<h4>Ngày đi: " + trip.getDate() + " " + trip.getTime() + " </h4>" ; // yyyy-MM-dd hh:ss
+            body += "<h4>Tổng quãng đường ước chừng: " + route.getDistance() + " </h4>" ;
+            body += "<p>Chúc bạn có chuyến đi thượng lộ nằm ngang !!!  </p>";
+            String email = userRepository.getEmailById(request.getUserId()).trim();
+            emailSenderService.sendSimpleEmail(email, "Thông tin vé đặt thành công",
+                    body);
             response.setStatus(200);
             response.setMessage("Đặt vé thành công");
             response.setData(new CreateTicketResultResponse(request.getTripId(),"sea" + String.valueOf(numberTicket + 1)));
 
         }catch (Exception e){
+            response.setStatus(417);
+            response.setMessage("Đặt vé thất bại");
             e.printStackTrace();
         }finally {
             return response;
@@ -62,6 +92,12 @@ public class TicketServiceImpl implements TicketService {
 
     }
 
+    /**
+     * It returns a list of tickets by user id.
+     *
+     * @param userId The userId of the user who is logged in.
+     * @return List of Ticket
+     */
     @Override
     public List<Ticket> getListTicketByUserId(String userId) {
         List<Ticket> ticketList = new ArrayList<>();
