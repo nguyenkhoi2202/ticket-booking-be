@@ -14,7 +14,7 @@ public interface TripRepository extends JpaRepository<Trip, String> {
     @Query(value = "select  * from trips", nativeQuery = true)
     List<Trip> getAllTrip();
 
-    @Query(value = "select * from trips where route_id = :routeId and date = :date ",nativeQuery = true)
+    @Query(value = "select * from trips where route_id = :routeId and date_trip = :date ",nativeQuery = true)
     List<Trip> getListTripByRouteIdAndDate(@Param("routeId") String routeId, @Param("date") Date date);
 
 //    @Query(value = "select vehical_id from trips where trip_id = :tripId",nativeQuery = true)

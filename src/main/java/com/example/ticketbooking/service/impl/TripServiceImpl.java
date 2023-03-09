@@ -54,16 +54,19 @@ public class TripServiceImpl implements TripService {
                 data.setVehicleId(tripList.get(i).getVehicalId());
                 Vehicle vehicle = vehicleRepository.getVehicleById(tripList.get(i).getVehicalId());
                 if (vehicle != null){
+                    data.setVehicleId(vehicle.getVehicalId());
                     data.setLiencePlate(vehicle.getLicensePlates());
                 }
                 Route route = routeRepository.getRouteByRouteId(tripList.get(i).getRouteId());
                 if(route != null){
+                    data.setRouteId(route.getRouteId());
                     data.setFrom(route.getFrom());
                     data.setArrival(route.getArrive());
                     data.setFare(route.getFare());
                 }
                 Station station = stationRepository.getSationByStationId(tripList.get(i).getStationId());
                 if(station != null){
+                    data.setStationId(station.getStationId());
                     data.setStationStart(station.getStationStart());
                     data.setStationEnd(station.getStationEnd());
                 }
@@ -169,16 +172,19 @@ public class TripServiceImpl implements TripService {
                     data.setTime(tripList.get(i).getTime());
                     Vehicle vehicle = vehicleRepository.getVehicleById(tripList.get(i).getVehicalId());
                     if (vehicle != null){
+                        data.setVehicleId(vehicle.getVehicalId());
                         data.setLiencePlate(vehicle.getLicensePlates());
                     }
                     Route route = routeRepository.getRouteByRouteId(tripList.get(i).getRouteId());
                     if(route != null){
+                        data.setRouteId(route.getRouteId());
                         data.setFrom(route.getFrom());
                         data.setArrival(route.getArrive());
                         data.setFare(route.getFare());
                     }
                     Station station = stationRepository.getSationByStationId(tripList.get(i).getStationId());
                     if(station != null){
+                        data.setStationId(station.getStationId());
                         data.setStationStart(station.getStationStart());
                         data.setStationEnd(station.getStationEnd());
                     }
