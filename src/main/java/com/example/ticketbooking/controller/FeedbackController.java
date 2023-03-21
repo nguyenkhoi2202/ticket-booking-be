@@ -39,6 +39,22 @@ public class FeedbackController {
     }
 
     @CrossOrigin(origins = "*")
+    @GetMapping("/getFeedBackByUserId")
+    public ResponseEntity<?> getFeedBackByUserId(@RequestParam String userId) {
+        ResponseEntity responseEntity = null;
+        try{
+            List<FeedBack> responses = feedbackService.getFeedBackByUserId(userId);
+            if (responses != null){
+                responseEntity =  ResponseEntity.status(200).body(responses);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
     @PostMapping("/createFeedBack")
     public ResponseEntity<?> createFeedBack(@RequestBody FeedBackCreateRequest request) {
         ResponseEntity responseEntity = null;

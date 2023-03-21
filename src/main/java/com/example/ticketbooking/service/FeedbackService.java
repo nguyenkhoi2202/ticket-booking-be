@@ -15,4 +15,6 @@ public interface FeedbackService {
     CommonResponse updateFeedBack(FeedBackUpdateRequest request);
 
     CommonResponse deleteFeedBack(String feedBackId);
+
+    List<FeedBack> getFeedBackByUserId(String userId);
 }

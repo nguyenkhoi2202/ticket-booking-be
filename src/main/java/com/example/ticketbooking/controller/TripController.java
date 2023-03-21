@@ -38,6 +38,24 @@ public class TripController {
     }
 
     @CrossOrigin(origins = "*")
+    @GetMapping("/getTripByTripId")
+    public ResponseEntity<?> getTripByTripId(@RequestParam String tripId) {
+        ResponseEntity responseEntity = null;
+        try{
+            Trip responses = tripService.getTripByTripId(tripId);
+            if (responses != null){
+                responseEntity =  ResponseEntity.status(200).body(responses);
+            }else {
+                responseEntity =  ResponseEntity.status(417).body(responses);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return responseEntity;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
     @PostMapping("/createTrip")
     public ResponseEntity<?> createTrip(@RequestBody TripCreateRequest request) {
         ResponseEntity responseEntity = null;

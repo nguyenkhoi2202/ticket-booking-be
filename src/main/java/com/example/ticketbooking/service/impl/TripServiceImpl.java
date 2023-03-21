@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class TripServiceImpl implements TripService {
@@ -225,4 +222,17 @@ public class TripServiceImpl implements TripService {
 
 
     }
+
+    @Override
+    public Trip getTripByTripId(String tripId) {
+            Trip trip = null;
+            try{
+                trip = tripRepository.findById(tripId).get();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return  trip;
+    }
+
+
 }

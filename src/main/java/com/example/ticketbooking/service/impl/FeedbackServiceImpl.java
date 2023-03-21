@@ -110,4 +110,14 @@ public class FeedbackServiceImpl implements FeedbackService {
             return  response;
         }
     }
+
+    @Override
+    public List<FeedBack> getFeedBackByUserId(String userId) {
+        List<FeedBack> feedBackList = feedBackRepository.getAllFeedBackByUserId(userId);
+        if (feedBackList != null){
+            return feedBackList;
+        }else {
+            return new ArrayList<>();
+        }
+    }
 }

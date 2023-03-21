@@ -22,4 +22,6 @@ public interface TripService {
     List<TripDataResponse> getAllTripByDate(TripDataRequest request);
 
     void cancelTicket() throws ParseException;
+
+    Trip getTripByTripId(String tripId);
 }
